@@ -28,7 +28,10 @@ public class Hero : MonoBehaviour
     public delegate void WeaponFireDelegate();                                // a     // Create a WeaponFireDelegate event named fireEvent.
     public event WeaponFireDelegate fireEvent;
 
-
+    [Header("Stuff for dash")]
+    public bool canDash;
+    public int dashCooldown;
+    public float dashStrength;
 
     void Awake()
     {
@@ -41,7 +44,7 @@ public class Hero : MonoBehaviour
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S!");
         }
         //fireEvent += TempFire;
-
+        canDash = true;
         // Reset the weapons to start _Hero with 1 blaster
         ClearWeapons();
         weapons[0].SetType(eWeaponType.blaster);
@@ -57,6 +60,16 @@ public class Hero : MonoBehaviour
         Vector3 pos = transform.position;
         pos.x += hAxis * speed * Time.deltaTime;
         pos.y += vAxis * speed * Time.deltaTime;
+
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            pos.x += hAxis * dashStrength;
+            pos.y += vAxis * dashStrength;
+            Invoke("resetTimeCooldown", dashCooldown);
+            canDash = false;
+        }
+
         transform.position = pos;
 
         // Rotate the ship to make it feel more dynamic                       // e
@@ -76,6 +89,10 @@ public class Hero : MonoBehaviour
 
     }
 
+    void resetTimeCooldown()
+    {
+        canDash = true;
+    }
 
     //void TempFire()
     //{
